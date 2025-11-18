@@ -1,167 +1,141 @@
-        // Variabel global untuk menyimpan ekspresi matematika yang sedang dibangun
-        let currentExpression = '0'; 
-        // Variabel untuk melacak apakah tombol operator terakhir yang diklik
-        let isOperatorClicked = false;
-        // Variabel untuk melacak apakah hasil perhitungan sebelumnya sudah ditampilkan
-        let isResultDisplayed = false;
 
-        // Fungsi untuk memperbarui tampilan kalkulator
-        function updateDisplay() {
-            // Dapatkan elemen display berdasarkan ID
+        //  Jelaskan Kodingan ini apa 
+        document.addEventListener('DOMContentLoaded', function() {
+            
+            //  Jelaskan Kodingan ini apa 
             const display = document.getElementById('display');
-            // Pastikan tampilan tidak kosong; jika kosong, tampilkan '0'
-            display.innerText = currentExpression || '0'; 
-        }
+            const statusImage = document.getElementById('statusImage');
+            const buttons = document.querySelectorAll('.btn-calc');
 
-        // Fungsi yang dipanggil saat tombol angka (0-9) diklik
-        function appendNumber(number) {
-            // Jika hasil sebelumnya baru saja ditampilkan, mulai ekspresi baru
-            if (isResultDisplayed) {
-                currentExpression = String(number);
-                isResultDisplayed = false;
-            // Jika ekspresi saat ini hanya '0', ganti dengan angka baru
-            } else if (currentExpression === '0') {
-                currentExpression = String(number);
-            // Tambahkan angka baru ke ekspresi yang ada
-            } else {
-                currentExpression += number;
-            }
-            // Reset status operator
-            isOperatorClicked = false; 
-            // Perbarui tampilan
-            updateDisplay();
-        }
+            //  Jelaskan Kodingan ini apa 
+            const imgNormal = 'https://placehold.co/400x100/374151/E5E7EB?text=Kalkulator';
+            const imgSuccess = 'https://placehold.co/400x100/16A34A/FFFFFF?text=Sukses!';
+            const imgError = 'https://placehold.co/400x100/DC2626/FFFFFF?text=Error!';
 
-        // Fungsi yang dipanggil saat tombol desimal (.) diklik
-        function appendDecimal() {
-            // Jika ekspresi saat ini adalah hasil perhitungan, mulai ekspresi baru dengan '0.'
-            if (isResultDisplayed) {
-                currentExpression = '0.';
-                isResultDisplayed = false;
-            } 
-            
-            // Cek apakah angka terakhir dalam ekspresi sudah mengandung titik desimal
-            // Ini mencegah dua titik desimal dalam satu angka (misalnya: 5.5.5)
-            const parts = currentExpression.split(/[\+\-\*\/]/);
-            const lastPart = parts[parts.length - 1];
-
-            if (!lastPart.includes('.')) {
-                // Tambahkan titik desimal hanya jika belum ada
-                currentExpression += '.';
-            }
-
-            // Perbarui tampilan
-            updateDisplay();
-        }
-
-        // Fungsi yang dipanggil saat tombol operator (+, -, *, /) diklik
-        function appendOperator(operator) {
-            // Reset status tampilan hasil
-            isResultDisplayed = false; 
-            
-            // Jika tombol operator terakhir kali sudah diklik, 
-            // ganti operator yang sudah ada di akhir ekspresi dengan operator yang baru
-            if (isOperatorClicked) {
-                // Hapus operator terakhir dan tambahkan yang baru
-                currentExpression = currentExpression.slice(0, -1) + operator;
-            } else {
-                // Tambahkan operator ke akhir ekspresi
-                currentExpression += operator;
-            }
-
-            // Atur status operator
-            isOperatorClicked = true; 
-            // Perbarui tampilan
-            updateDisplay();
-        }
-
-        // Fungsi yang dipanggil saat tombol Clear (C) diklik
-        function clearDisplay() {
-            // Reset semua variabel ke kondisi awal
-            currentExpression = '0';
-            isOperatorClicked = false;
-            isResultDisplayed = false;
-            // Perbarui tampilan
-            updateDisplay();
-        }
-        
-        // Fungsi baru untuk menghapus karakter terakhir (Delete / Backspace)
-        function deleteLast() {
-            // Jika ekspresi saat ini adalah hasil (setelah tombol =), jangan hapus
-            if (isResultDisplayed) return;
-
-            // Hapus karakter terakhir dari ekspresi
-            currentExpression = currentExpression.slice(0, -1);
-
-            // Jika ekspresi menjadi kosong, reset ke '0'
-            if (currentExpression.length === 0) {
-                currentExpression = '0';
-            }
-            
-            // Perbarui tampilan
-            updateDisplay();
-        }
-
-        // Fungsi baru untuk menerapkan persentase
-        function applyPercentage() {
-            try {
-                // Evaluasi ekspresi saat ini untuk mendapatkan nilai terakhir
-                // Misalnya, jika '100+50', kita hanya ingin 50 yang dihitung persentasenya
-                const parts = currentExpression.split(/([\+\-\*\/])/).filter(p => p.trim() !== '');
-                if (parts.length === 0) return;
-
-                // Ambil nilai terakhir (yang akan dijadikan persen)
-                const lastValue = parts[parts.length - 1];
-                let numericValue = parseFloat(lastValue);
-
-                if (isNaN(numericValue)) return;
-
-                // Hitung persentase (dibagi 100)
-                const percentageValue = numericValue / 100;
-
-                // Ganti nilai terakhir dalam ekspresi dengan hasil persentase
-                // Hapus bagian terakhir dari ekspresi asli
-                const newExpression = currentExpression.slice(0, currentExpression.lastIndexOf(lastValue));
-                
-                // Tambahkan nilai persentase yang sudah dihitung (dibatasi presisi)
-                currentExpression = newExpression + String(Number(percentageValue.toFixed(10)));
-
-            } catch (error) {
-                // Tangani kesalahan jika ekspresi tidak valid
-                currentExpression = 'Error';
-            }
-            
-            isResultDisplayed = false;
-            updateDisplay();
-        }
-
-
-        // Fungsi yang dipanggil saat tombol Sama Dengan (=) diklik
-        function calculate() {
-            try {
-                // Menghitung hasil dari ekspresi saat ini. 
-                // Fungsi eval() digunakan untuk mengevaluasi string sebagai kode JavaScript.
-                // Penggantian 'x' dengan '*' dilakukan untuk perhitungan.
-                const result = eval(currentExpression.replace(/x/g, '*'));
-                
-                // Jika hasilnya tak terhingga atau NaN (Not a Number), anggap sebagai Error
-                if (!isFinite(result)) {
-                    currentExpression = 'Error: Pembagian dengan nol';
+            /**
+              Jelaskan Kodingan ini apa 
+             */
+            function changeImage(state) {
+                if (state === 'success') {
+                    statusImage.src = imgSuccess;
+                    statusImage.alt = "Perhitungan Sukses";
+                } else if (state === 'error') {
+                    statusImage.src = imgError;
+                    statusImage.alt = "Error Perhitungan";
                 } else {
-                    // FIX: Gunakan Number().toFixed() untuk membatasi presisi maksimal (10 desimal)
-                    // dan menghilangkan nol yang tidak perlu (misalnya 5.000 menjadi 5), sehingga format angka rapih.
-                    currentExpression = String(Number(result.toFixed(10))); 
+                    //  Jelaskan Kodingan ini apa 
+                    statusImage.src = imgNormal;
+                    statusImage.alt = "Status Kalkulator";
+                }
+            }
+
+            /**
+              Jelaskan Kodingan ini apa 
+             */
+            function clearDisplay() {
+                display.value = '';
+                changeImage('normal'); // Memanggil function untuk merubah gambar
+            }
+
+            /**
+              Jelaskan Kodingan ini apa 
+             */
+            function deleteLastChar() {
+                display.value = display.value.slice(0, -1);
+            }
+
+            /**
+              Jelaskan Kodingan ini apa 
+             */
+            function appendToDisplay(value) {
+                display.value += value;
+            }
+
+            /**
+              Jelaskan Kodingan ini apa 
+             */
+            function calculateResult() {
+                //  Jelaskan Kodingan ini apa 
+                if (display.value === '') {
+                    changeImage('error');
+                    display.value = 'Kosong!';
+                    //  Jelaskan Kodingan ini apa 
+                    setTimeout(clearDisplay, 1500);
+                    return;
                 }
 
-            } catch (error) {
-                // Jika ada kesalahan sintaks (misal: 5 + *), tampilkan Error
-                console.error("Kesalahan perhitungan:", error);
-                currentExpression = 'Error: Ekspresi tidak valid';
+                try {
+                    //  Jelaskan Kodingan ini apa 
+                    let result = eval(display.value
+                        .replace(/%/g, '/100') //  Jelaskan Kodingan ini apa 
+                    ); 
+                    
+                    //  Jelaskan Kodingan ini apa 
+                    if (isFinite(result)) {
+                        display.value = result;
+                        changeImage('success'); //  Jelaskan Kodingan ini apa 
+                    } else {
+                        throw new Error("Hasil tidak valid");
+                    }
+
+                } catch (error) {
+                    console.error("Error kalkulasi:", error);
+                    display.value = 'Error';
+                    changeImage('error'); //  Jelaskan Kodingan ini apa 
+                    setTimeout(clearDisplay, 1500);
+                }
             }
 
-            // Atur status tampilan hasil dan operator
-            isResultDisplayed = true;
-            isOperatorClicked = false; 
-            // Perbarui tampilan
-            updateDisplay();
-        }
+
+            //  Jelaskan Kodingan ini apa 
+            buttons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const value = button.getAttribute('data-value');
+
+                    //  Jelaskan Kodingan ini apa 
+                    switch(value) {
+                        case 'C':
+                            //  Jelaskan Kodingan ini apa 
+                            clearDisplay();
+                            break;
+                        case 'DEL':
+                            //  Jelaskan Kodingan ini apa 
+                            deleteLastChar();
+                            break;
+                        case '=':
+                            //  Jelaskan Kodingan ini apa 
+                            calculateResult();
+                            break;
+                        default:
+                            //  Jelaskan Kodingan ini apa 
+                            if (statusImage.src === imgSuccess || statusImage.src === imgError) {
+                                clearDisplay();
+                            }
+                            appendToDisplay(value);
+                            break;
+                    }
+                });
+            });
+
+            //  Jelaskan Kodingan ini apa 
+            document.addEventListener('keydown', (e) => {
+                const key = e.key;
+
+                if (key >= '0' && key <= '9' || key === '.' || key === '+' || key === '-' || key === '*' || key === '/' || key === '%') {
+                    if (statusImage.src === imgSuccess || statusImage.src === imgError) {
+                        clearDisplay();
+                    }
+                    appendToDisplay(key);
+                    e.preventDefault();
+                } else if (key === 'Enter' || key === '=') {
+                    calculateResult();
+                    e.preventDefault();
+                } else if (key === 'Backspace') {
+                    deleteLastChar();
+                    e.preventDefault();
+                } else if (key === 'Escape' || key.toLowerCase() === 'c') {
+                    clearDisplay();
+                    e.preventDefault();
+                }
+            });
+        });
