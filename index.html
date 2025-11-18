@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalkulator - Rashifah Hasna Faizah Elhaq</title>
+    <!-- Tambahkan Google Font 'Inter' untuk tampilan modern dan bersih -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <link href="Style.css" rel="stylesheet">
+</head>
+<body>
+
+    <div class="calculator">
+        <div class="info">
+            <h1>Rashifah Hasna Faizah Elhaq</h1>
+            <p>1710624106</p>
+        </div>
+        <div class="display" id="display">0</div>
+        <div class="buttons">
+            <!-- R1: C DEL % / (Tombol aksi dan operator) -->
+            <button class="btn btn-action" onclick="clearDisplay()">C</button>
+            <!-- Posisi ditukar: DEL sekarang di posisi kedua -->
+            <button class="btn btn-action" onclick="deleteLast()">DEL</button>
+            <!-- Posisi ditukar: % sekarang di posisi ketiga -->
+            <button class="btn btn-action" onclick="applyPercentage()">%</button>
+            <button class="btn btn-operator" onclick="appendOperator('/')">/</button>
+
+            <!-- R2: 7 8 9 x -->
+            <button class="btn btn-number" onclick="appendNumber(7)">7</button>
+            <button class="btn btn-number" onclick="appendNumber(8)">8</button>
+            <button class="btn btn-number" onclick="appendNumber(9)">9</button>
+            <button class="btn btn-operator" onclick="appendOperator('*')">x</button>
+
+            <!-- R3: 4 5 6 - -->
+            <button class="btn btn-number" onclick="appendNumber(4)">4</button>
+            <button class="btn btn-number" onclick="appendNumber(5)">5</button>
+            <button class="btn btn-number" onclick="appendNumber(6)">6</button>
+            <button class="btn btn-operator" onclick="appendOperator('-')">-</button>
+
+            <!-- R4: 1 2 3 + -->
+            <button class="btn btn-number" onclick="appendNumber(1)">1</button>
+            <button class="btn btn-number" onclick="appendNumber(2)">2</button>
+            <button class="btn btn-number" onclick="appendNumber(3)">3</button>
+            <button class="btn btn-operator" onclick="appendOperator('+')">+</button>
+
+            <!-- R5: 0 . = (Mengisi 4 kolom, tombol 0 span 2) -->
+            <button class="btn btn-zero" onclick="appendNumber(0)" style="grid-column: span 2;">0</button>
+            <button class="btn btn-number" onclick="appendDecimal()">.</button>
+            <button class="btn btn-equal" onclick="calculate()">=</button>
+        </div>
+    </div>
+
+    <script src="Script.js"></script>
+</body>
+</html>
